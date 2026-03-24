@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shalu Prakasia — Embedded Firmware Developer</title>
+  <meta name="description" content="Portfolio of Shalu Prakasia — Embedded Firmware Developer specialising in Zephyr RTOS, device drivers, and automated testing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #1a1a1a;
+      --bg2:        #202020;
+      --surface:    #282828;
+      --border:     #333;
+      --gold:       #d4a843;
+      --gold-lt:    #e8c56a;
+      --gold-dim:   rgba(212,168,67,.13);
+      --text:       #e4ddd3;
+      --muted:      #7a7570;
+      --white:      #f5f0e8;
+      --serif:      'Playfair Display', Georgia, serif;
+      --sans:       'Inter', system-ui, sans-serif;
+      --mono:       'JetBrains Mono', monospace;
+      --r:          8px;
+      --r-lg:       12px;
+      --shadow:     0 4px 24px rgba(0,0,0,.45);
+      --glow:       0 0 28px rgba(212,168,67,.22);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--gold); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--gold-lt); }
+    img { max-width: 100%; display: block; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 5% 15%, rgba(212,168,67,.05) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 70% at 95% 85%, rgba(212,168,67,.04) 0%, transparent 55%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 3rem;
+      background: rgba(26,26,26,.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.1rem; color: var(--white); }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-size: .76rem; font-weight: 500; color: var(--muted);
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+    /* LAYOUT */
+    section { position: relative; z-index: 1; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 2rem; }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; align-items: center; padding: 7rem 0 5rem; }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 260px;
+      gap: 5rem; align-items: center;
+    }
+    .hero-label {
+      display: inline-flex; align-items: center; gap: .7rem;
+      font-family: var(--mono); font-size: .71rem; color: var(--gold);
+      letter-spacing: .16em; text-transform: uppercase; margin-bottom: 1.4rem;
+      opacity: 0; animation: fadeUp .5s .1s forwards;
+    }
+    .hero-label::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+    h1 {
+      font-family: var(--serif); font-size: clamp(2.8rem, 5.5vw, 4.2rem);
+      font-weight: 900; line-height: 1.05; color: var(--white);
+      opacity: 0; animation: fadeUp .5s .2s forwards;
+    }
+    h1 em { font-style: normal; color: var(--gold); display: block; }
+    .hero-sub {
+      margin-top: .9rem; font-size: 1rem; color: var(--muted);
+      font-weight: 300; letter-spacing: .02em;
+      opacity: 0; animation: fadeUp .5s .3s forwards;
+    }
+    .hero-divider {
+      width: 44px; height: 2px; background: var(--gold); margin: 1.8rem 0;
+      opacity: 0; animation: fadeUp .5s .32s forwards;
+    }
+    .hero-bio {
+      font-size: .95rem; color: var(--text); max-width: 500px; line-height: 1.8;
+      opacity: 0; animation: fadeUp .5s .4s forwards;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;
+      opacity: 0; animation: fadeUp .5s .5s forwards;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.6rem; border-radius: var(--r);
+      font-size: .82rem; font-weight: 600; letter-spacing: .05em;
+      cursor: pointer; transition: all .22s; text-decoration: none;
+    }
+    .btn-gold { background: var(--gold); color: #1a1a1a; }
+    .btn-gold:hover { background: var(--gold-lt); color: #1a1a1a; transform: translateY(-2px); box-shadow: var(--glow); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--text); background: transparent; }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    /* PHOTO */
+    .hero-photo { opacity: 0; animation: fadeIn .7s .5s forwards; display: flex; flex-direction: column; align-items: center; gap: 1.4rem; }
+    .photo-frame {
+      width: 220px; height: 220px; border-radius: 50%;
+      background: var(--surface); overflow: hidden; position: relative;
+      border: 3px solid var(--border);
+      box-shadow: 0 0 0 6px rgba(212,168,67,.07), var(--shadow);
+    }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-ph {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: .5rem; color: var(--muted); font-family: var(--mono);
+      font-size: .67rem; text-align: center; padding: 1.4rem;
+    }
+    .avail {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(212,168,67,.08); border: 1px solid rgba(212,168,67,.2);
+      border-radius: 100px; padding: .38rem 1rem;
+      font-family: var(--mono); font-size: .7rem; color: var(--gold);
+    }
+    .dot-green { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; animation: pulse 2.5s infinite; }
+
+    /* SECTION HEAD */
+    .sec-head { margin-bottom: 3.5rem; }
+    .sec-eye {
+      font-family: var(--mono); font-size: .69rem; color: var(--gold);
+      letter-spacing: .2em; text-transform: uppercase; margin-bottom: .6rem;
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .sec-eye::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--gold); opacity: .45; }
+    h2 { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.3rem); font-weight: 700; color: var(--white); }
+
+    /* SKILLS */
+    #skills { padding: 7rem 0; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.2rem; }
+    .skill-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 1.6rem;
+      transition: border-color .22s, transform .22s, box-shadow .22s;
+    }
+    .skill-card:hover { border-color: rgba(212,168,67,.35); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+    .sk-head { display: flex; align-items: center; gap: .7rem; margin-bottom: 1rem; }
+    .sk-icon { width: 34px; height: 34px; background: var(--gold-dim); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .sk-label { font-size: .8rem; font-weight: 600; color: var(--white); }
+    .tags { display: flex; flex-wrap: wrap; gap: .38rem; }
+    .tag { padding: .23rem .6rem; border-radius: 4px; font-size: .74rem; font-family: var(--mono); background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--text); }
+    .tag.hi { border-color: rgba(212,168,67,.32); color: var(--gold-lt); background: rgba(212,168,67,.07); }
+
+    /* EXPERIENCE TIMELINE */
+    #experience { padding: 7rem 0; background: var(--bg2); }
+    .timeline { position: relative; padding-left: 2px; }
+    .tl-line { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--gold), transparent); opacity: .25; }
+    .tl-item { padding: 0 0 2.8rem 2.4rem; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot { position: absolute; left: -5px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--bg2); box-shadow: 0 0 14px rgba(212,168,67,.5); }
+    .tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.6rem 2rem; transition: border-color .22s; }
+    .tl-card:hover { border-color: rgba(212,168,67,.3); }
+    .tl-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .5rem; margin-bottom: .5rem; }
+    .tl-role { font-size: 1.05rem; font-weight: 600; color: var(--white); }
+    .tl-date { font-family: var(--mono); font-size: .69rem; color: var(--gold); background: var(--gold-dim); padding: .2rem .6rem; border-radius: 4px; white-space: nowrap; }
+    .tl-co { font-size: .84rem; color: var(--muted); margin-bottom: 1rem; }
+    .tl-co strong { color: var(--gold-lt); font-weight: 500; }
+    .tl-list { list-style: none; display: flex; flex-direction: column; gap: .42rem; }
+    .tl-list li { font-size: .87rem; color: var(--text); opacity: .85; padding-left: 1.1rem; position: relative; }
+    .tl-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); font-size: .68rem; top: .12em; }
+
+    /* PROJECTS */
+    #projects { padding: 7rem 0; }
+    .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.4rem; }
+    .proj-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 2rem;
+      display: flex; flex-direction: column; gap: 1.1rem;
+      position: relative; overflow: hidden;
+      transition: border-color .22s, transform .22s, box-shadow .22s;
+    }
+    .proj-card::before {
+      content: ''; position: absolute; inset: 0 0 auto 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+    }
+    .proj-card:hover { border-color: rgba(212,168,67,.35); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.35); }
+    .proj-card:hover::before { transform: scaleX(1); }
+    .proj-n { font-family: var(--serif); font-size: 3rem; font-weight: 900; color: rgba(212,168,67,.1); line-height: 1; margin-bottom: -.6rem; }
+    .proj-name { font-size: 1.05rem; font-weight: 600; color: var(--white); }
+    .proj-desc { font-size: .87rem; color: var(--text); opacity: .8; line-height: 1.72; flex: 1; }
+    .proj-foot { display: flex; justify-content: space-between; align-items: center; padding-top: .6rem; border-top: 1px solid var(--border); }
+    .proj-link { font-family: var(--mono); font-size: .72rem; color: var(--gold); }
+    .proj-link:hover { color: var(--gold-lt); }
+
+    /* EDUCATION TIMELINE */
+    #education { padding: 7rem 0; background: var(--bg2); }
+    .edu-tl { position: relative; padding-left: 2px; }
+    .edu-line { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--gold), transparent); opacity: .25; }
+    .edu-item { padding: 0 0 2.2rem 2.4rem; position: relative; }
+    .edu-item:last-child { padding-bottom: 0; }
+    .edu-dot { position: absolute; left: -5px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg2); border: 2px solid var(--gold); }
+    .edu-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.5rem 2rem; transition: border-color .22s; }
+    .edu-card:hover { border-color: rgba(212,168,67,.3); }
+    .edu-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: .4rem; }
+    .edu-deg { font-size: 1rem; font-weight: 600; color: var(--white); }
+    .edu-date { font-family: var(--mono); font-size: .69rem; color: var(--gold); background: var(--gold-dim); padding: .2rem .6rem; border-radius: 4px; white-space: nowrap; }
+    .edu-school { font-size: .83rem; color: var(--gold-lt); margin-bottom: .55rem; }
+    .edu-note { font-size: .83rem; color: var(--muted); font-style: italic; line-height: 1.55; }
+    .badge-green { display: inline-flex; align-items: center; gap: .4rem; margin-top: .7rem; font-family: var(--mono); font-size: .67rem; color: #4ade80; background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.2); border-radius: 100px; padding: .2rem .65rem; }
+
+    /* CONTACT */
+    #contact { padding: 7rem 0 8rem; }
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-intro p { font-size: .94rem; color: var(--muted); line-height: 1.78; margin: 1rem 0 1.5rem; }
+    .c-links { display: flex; flex-direction: column; gap: .85rem; }
+    .c-link {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.1rem 1.4rem; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      transition: border-color .22s, transform .22s; color: inherit;
+    }
+    .c-link:hover { border-color: rgba(212,168,67,.4); transform: translateX(4px); color: inherit; }
+    .c-ico { width: 40px; height: 40px; background: var(--gold-dim); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .c-lbl { font-family: var(--mono); font-size: .63rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .1rem; }
+    .c-val { font-size: .9rem; color: var(--text); font-weight: 500; }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: .69rem; color: var(--muted); }
+    footer span { color: var(--gold); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 820px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.4rem; }
+      .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-photo { order: -1; }
+      .hero-bio { max-width: 100%; }
+      .hero-cta { justify-content: center; }
+      h1, .hero-label, .hero-sub, .hero-divider, .hero-bio, .hero-cta { text-align: center; }
+      .hero-label { justify-content: center; }
+      .hero-divider { margin-left: auto; margin-right: auto; }
+      .hero-photo { align-items: center; }
+      .contact-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    @media (max-width: 520px) {
+      .nav-links { display: none; }
+      h1 { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Shalu <span>Prakasia</span></div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ░░ HERO ░░ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-label">Embedded Firmware Developer</div>
+        <h1>Shalu Prakasia</h1>
+        <p class="hero-sub">MSc Embedded Systems · Zephyr RTOS · Python · AI/ML </p>
+        <div class="hero-divider"></div>
+        <p class="hero-bio">I am an Embedded Systems Developer with a passion for making hardware and software work seamlessly together. My expertise lies in Embedded C, Zephyr RTOS, and also in building device drivers and automated testing systems.<br>
+          I am expanding my skillset through an intensive Python AI/ML program. I’m eager to apply my background in real-time systems to innovative internship or junior developer roles.</p> 
+      <div class="hero-cta">
+          <a href="assets/Shalu Prakasia Resume.pdf" target="_blank" class="btn btn-gold">📥 Resume</a>
+          <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+          <a href="#projects" class="btn btn-ghost">View Projects →</a>
+        </div>
+      </div>
+
+      <div class="hero-photo">
+        <img src="assets/photo.png" alt="Shalu Prakasia" />
+        <div class="avail">
+          <span class="dot-green"></span>
+          Open to opportunities
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ SKILLS ░░ -->
+<section id="skills">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-eye"> — Skills</div>
+      <h2>Technical Expertise</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">⚙️</div><span class="sk-label">Embedded &amp; RTOS</span></div>
+        <div class="tags">
+          <span class="tag hi">Zephyr RTOS</span><span class="tag hi">Embedded C</span>
+          <span class="tag">PIC Microcontroller</span><span class="tag">8051</span>
+          <span class="tag">ARM-7</span><span class="tag">Arduino</span><span class="tag">Raspberry Pi Pico</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">📡</div><span class="sk-label">Communication Protocols</span></div>
+        <div class="tags">
+          <span class="tag hi">UART</span><span class="tag hi">I2C</span><span class="tag hi">SPI</span>
+          <span class="tag">GPIO</span><span class="tag">ADC</span><span class="tag">Timers</span><span class="tag">Interrupts</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">💻</div><span class="sk-label">Programming Languages</span></div>
+        <div class="tags">
+          <span class="tag hi">Embedded C</span><span class="tag hi">Python</span>
+          <span class="tag">MATLAB / Simulink</span><span class="tag">HTML</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">🧪</div><span class="sk-label">Testing &amp; CI/CD</span></div>
+        <div class="tags">
+          <span class="tag hi">Robot Framework</span><span class="tag hi">Renode Simulation</span>
+          <span class="tag">CI/CD Pipelines</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">🛠️</div><span class="sk-label">Tools &amp; Platforms</span></div>
+        <div class="tags">
+          <span class="tag">GitHub</span><span class="tag">VS Code</span><span class="tag">Docker</span>
+          <span class="tag">Jira</span><span class="tag">Trello</span><span class="tag">Anaconda</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="sk-head"><div class="sk-icon">🤖</div><span class="sk-label">AI &amp; Data — In Training</span></div>
+        <div class="tags">
+          <span class="tag hi">TensorFlow</span><span class="tag">SciKit-Learn</span>
+          <span class="tag">Django</span><span class="tag">SQLite</span>
+          <!-- <span class="tag">MongoDB</span><span class="tag">Azure AI-900</span> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ EXPERIENCE ░░ -->
+<section id="experience">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-eye"> — Experience</div>
+      <h2>Work History</h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-line"></div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-top">
+            <span class="tl-role">Firmware Developer — Intern</span>
+            <span class="tl-date">Jun 2023 – Aug 2023</span>
+          </div>
+          <div class="tl-co"><strong>ASSA ABLOY</strong> · Stockholm, Sweden</div>
+          <ul class="tl-list">
+            <li>Developed device drivers for Nordic Semiconductor boards using Zephyr RTOS</li>
+            <li>Automated testing workflows with Robot Framework, improving coverage and efficiency</li>
+            <li>Collaborated in Agile/Scrum environment across sprint planning and timely delivery</li>
+            <li>Documented design decisions, test plans, and code architecture for knowledge transfer</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-top">
+            <span class="tl-role">Embedded Engineer</span>
+            <span class="tl-date">Apr 2014 – Aug 2015</span>
+          </div>
+          <div class="tl-co"><strong>Botz Embedded Solutions</strong> · India</div>
+          <ul class="tl-list">
+            <li>Developed embedded systems using 8051, PIC16F, and ARM-7 microcontrollers</li>
+            <li>Implemented peripherals: GPIOs, ADC, Timers, Interrupts, LCD, RTC, GSM, GPS, Zigbee</li>
+            <li>Implemented UART and I2C communication protocols</li>
+            <li>Delivered hands-on Arduino and Embedded C training to engineering students</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ PROJECTS ░░ -->
+<section id="projects">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-eye"> — Projects</div>
+      <h2>Selected Work</h2>
+    </div>
+    <div class="proj-grid">
+
+      <div class="proj-card reveal">
+        <div class="proj-n">01</div>
+        <div class="proj-name">Smart Soil &amp; Air Quality Monitor</div>
+        <p class="proj-desc">Two-node environmental sensing system on Raspberry Pi Pico boards running Zephyr RTOS. Sensor node reads BME680 (temp, humidity, VOC via I2C), soil moisture, and air quality. Controller node processes data and triggers interrupt-based threshold warnings.</p>
+        <div class="tags" style="gap:.35rem;">
+          <span class="tag">Zephyr RTOS</span><span class="tag">Raspberry Pi Pico</span>
+          <span class="tag">I2C</span><span class="tag">BME680</span>
+        </div>
+        <div class="proj-foot">
+          <a href="https://github.com/Prakasia/EmbeddedProject" target="_blank" class="proj-link">GitHub Repository ↗</a>
+        </div>
+      </div>
+      <div class="proj-card reveal">
+        <div class="proj-n">01</div>
+        <div class="proj-name">Titanic Survival &amp; Predictor</div>
+        <p class="proj-desc">Titanic survival predictor is a Django web application that uses a trained machine learning model to predict whether a passenger on the Titanic would have survived based on their details via user interface.</p>
+        <div class="tags" style="gap:.35rem;">
+          <span class="tag">Django</span><span class="tag">Machine learning</span>
+          <span class="tag">HTML</span><span class="tag">CSS</span>
+        </div>
+        <div class="proj-foot">
+          <a href="https://github.com/pernilla-jacobsen/Titanic" target="_blank" class="proj-link">GitHub Repository ↗</a>
+        </div>
+      </div>
+      <!-- <div class="proj-card reveal">
+        <div class="proj-n">02</div>
+        <div class="proj-name">Garden Automation System</div>
+        <p class="proj-desc">Automated irrigation system using Arduino and PIC microcontrollers. Sensor-based optimisation achieved measurable reduction in water consumption via intelligent threshold-based control logic.</p>
+        <div class="tags" style="gap:.35rem;">
+          <span class="tag">Arduino</span><span class="tag">PIC MCU</span>
+          <span class="tag">Sensors</span><span class="tag">Embedded C</span>
+        </div>
+        <div class="proj-foot">
+          <span style="font-family:var(--mono);font-size:.71rem;color:var(--muted)">Personal Project</span>
+        </div>
+      </div> -->
+
+      <div class="proj-card reveal">
+        <div class="proj-n">03</div>
+        <div class="proj-name">Hardware Simulation for CI/CD</div>
+        <p class="proj-desc">Master's thesis in collaboration with ASSA ABLOY. Investigated Renode hardware simulation to enhance CI/CD pipelines and reduce overhead in embedded software development cycles.</p>
+        <div class="tags" style="gap:.35rem;">
+          <span class="tag">Renode</span><span class="tag">CI/CD</span><span class="tag">Zephyr RTOS</span>
+        </div>
+        <div class="proj-foot">
+          <a href="https://www.diva-portal.org/smash/record.jsf?dswid=-6099&pid=diva2%3A1900246" target="_blank" rel="noopener" class="proj-link">DiVA Publication ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ░░ EDUCATION ░░ -->
+<section id="education">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-eye"> — Education</div>
+      <h2>Academic Background</h2>
+    </div>
+    <div class="edu-tl">
+      <div class="edu-line"></div>
+
+      <div class="edu-item reveal">
+        <div class="edu-dot"></div>
+        <div class="edu-card">
+          <div class="edu-top">
+            <span class="edu-deg">Python Developer Certification</span>
+            <span class="edu-date">Dec 2025 – May 2026</span>
+          </div>
+          <div class="edu-school">Intensive Bootcamp — 40 hrs/week of instructor-led study</div>
+          <div class="edu-note">Python · OOP · Django · MongoDB · SQLite · TensorFlow · SciKit-Learn · deep learning · prompt engineering · Docker · Git/GitHub · Azure AI-900 prep</div>
+          <div class="badge-green">
+            <span style="width:5px;height:5px;background:#4ade80;border-radius:50%;display:inline-block;animation:pulse 2.5s infinite"></span>
+            Currently enrolled
+          </div>
+        </div>
+      </div>
+
+      <div class="edu-item reveal">
+        <div class="edu-dot"></div>
+        <div class="edu-card">
+          <div class="edu-top">
+            <span class="edu-deg">MSc in Embedded Systems</span>
+            <span class="edu-date">Aug 2022 – Aug 2024</span>
+          </div>
+          <div class="edu-school">Uppsala University, Sweden</div>
+          <div class="edu-note">Thesis: <em>Investigating Hardware Simulation for CI/CD</em> — in collaboration with ASSA ABLOY. Explored Renode to enhance CI/CD pipelines. (DiVA ID: diva2:1900246)</div>
+        </div>
+      </div>
+
+      <div class="edu-item reveal">
+        <div class="edu-dot"></div>
+        <div class="edu-card">
+          <div class="edu-top">
+            <span class="edu-deg">BTech in Electronics &amp; Communication Engineering</span>
+            <span class="edu-date">Jul 2009 – Aug 2013</span>
+          </div>
+          <div class="edu-school">India</div>
+          <div class="edu-note">Final Project: Temperature Controller using 8051 — designed a monitoring and control system using LM35 sensor with LCD display and automated threshold-based cooling.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ CONTACT ░░ -->
+<section id="contact">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="sec-eye"> — Contact</div>
+      <h2>Let's Work Together</h2>
+    </div>
+    <div class="contact-wrap">
+      <div class="contact-intro reveal">
+        <p>Open to embedded firmware developer roles, collaborative research projects, internships and opportunities in Stockholm, Sweden. </p>
+        <div class="avail">
+          <span class="dot-green"></span>
+          Based in Stockholm, Sweden
+        </div>
+      </div>
+      <div class="c-links reveal">
+        <!-- E-MAIL ID --> 
+        <a href="mailto:shaluprakasia@gmail.com" class="c-link">
+          <div class="c-ico">✉️</div>
+          <div><div class="c-lbl">Email</div><div class="c-val">shaluprakasia@gmail.com</div></div>
+        </a>
+        <!-- TELEPHONE --> 
+        <a href="tel:+46734765204" class="c-link">
+          <div class="c-ico">📞</div>
+          <div><div class="c-lbl">Phone</div><div class="c-val">+46 073 476 5204</div></div>
+        </a>
+        <!-- LinkedIn URL --> 
+        <a href="https://www.linkedin.com/in/shalu-prakasia/" target="_blank" class="c-link">
+          <div class="c-ico">💼</div>
+          <div><div class="c-lbl">LinkedIn</div><div class="c-val">View Profile →</div></div>
+        </a>
+        <!--  GitHub URL -->
+        <a href="https://github.com/Prakasia" target="_blank" class="c-link">
+          <div class="c-ico">🐙</div>
+          <div><div class="c-lbl">GitHub</div><div class="c-val">View Repositories →</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Built by <span>Shalu Prakasia</span> · Stockholm, Sweden · 2025</p>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 85);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const secs = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    secs.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  });
+</script>
+</body>
+</html>
